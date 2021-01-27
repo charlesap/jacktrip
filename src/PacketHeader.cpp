@@ -48,8 +48,9 @@
 using std::cout;
 using std::endl;
 
-// below is the gettimeofday definition for windows: this function is not defined in sys/time.h as it is in unix
-// for more info check: http://www.halcode.com/archives/2008/08/26/retrieving-system-time-gettimeofday/
+// below is the gettimeofday definition for windows: this function is not defined in
+// sys/time.h as it is in unix for more info check:
+// http://www.halcode.com/archives/2008/08/26/retrieving-system-time-gettimeofday/
 #if defined __WIN_32__
 #ifdef __cplusplus
 void GetSystemTimeAsFileTime(FILETIME*);
@@ -98,8 +99,8 @@ DefaultHeader::DefaultHeader(JackTrip* jacktrip)
     mHeader.BufferSize    = 0;
     mHeader.SamplingRate  = 0;
     mHeader.BitResolution = 0;
-    //mHeader.NumInChannels = 0;
-    //mHeader.NumOutChannels = 0;
+    // mHeader.NumInChannels = 0;
+    // mHeader.NumOutChannels = 0;
     mHeader.NumChannels    = 0;
     mHeader.ConnectionMode = 0;
 }
@@ -113,7 +114,7 @@ void DefaultHeader::fillHeaderCommonFromAudio()
     mHeader.BitResolution  = mJackTrip->getAudioBitResolution();
     mHeader.NumChannels    = mJackTrip->getNumChannels();
     mHeader.ConnectionMode = static_cast<int>(mJackTrip->getConnectionMode());
-    //printHeader();
+    // printHeader();
 }
 
 //***********************************************************************
@@ -129,9 +130,9 @@ void DefaultHeader::checkPeerSettings(int8_t* full_packet)
         std::cerr << "WARNING: Peer Buffer Size is  : " << peer_header->BufferSize
                   << endl;
         std::cerr << "         Local Buffer Size is : " << mHeader.BufferSize << endl;
-        //std::cerr << "Make sure both machines use same buffer size" << endl;
-        //std::cerr << gPrintSeparator << endl;
-        //error = true;
+        // std::cerr << "Make sure both machines use same buffer size" << endl;
+        // std::cerr << gPrintSeparator << endl;
+        // error = true;
     }
 
     // Check Sampling Rate
@@ -163,9 +164,9 @@ void DefaultHeader::checkPeerSettings(int8_t* full_packet)
 
     // Exit program if error
     if (error) {
-        //std::cerr << "Exiting program..." << endl;
-        //std::exit(1);
-        //throw std::logic_error("Local and Peer Settings don't match");
+        // std::cerr << "Exiting program..." << endl;
+        // std::exit(1);
+        // throw std::logic_error("Local and Peer Settings don't match");
         emit signalError("Local and Peer Settings don't match");
     }
     /// \todo Check number of channels and other parameters
@@ -183,8 +184,9 @@ void DefaultHeader::printHeader() const
     cout << "Sampling Rate             = " << sample_rate << endl;
     cout << "Audio Bit Resolutions     = " << static_cast<int>(mHeader.BitResolution)
          << endl;
-    //cout << "Number of Input Channels  = " << static_cast<int>(mHeader.NumInChannels) << endl;
-    //cout << "Number of Output Channels = " << static_cast<int>(mHeader.NumOutChannels) << endl;
+    // cout << "Number of Input Channels  = " << static_cast<int>(mHeader.NumInChannels)
+    // << endl; cout << "Number of Output Channels = " <<
+    // static_cast<int>(mHeader.NumOutChannels) << endl;
     cout << "Number of Channels        = " << static_cast<int>(mHeader.NumChannels)
          << endl;
     cout << "Sequence Number           = " << static_cast<int>(mHeader.SeqNumber) << endl;
@@ -192,7 +194,7 @@ void DefaultHeader::printHeader() const
     cout << "Connection Mode           = " << static_cast<int>(mHeader.ConnectionMode)
          << endl;
     cout << gPrintSeparator << endl;
-    //cout << sizeof(mHeader) << endl;
+    // cout << sizeof(mHeader) << endl;
 }
 
 //***********************************************************************
@@ -269,11 +271,13 @@ void JamLinkHeader::fillHeaderCommonFromAudio()
     // Check number of channels
     unsigned int num_inchannels = mJackTrip->getNumInputChannels();
     if (num_inchannels != 1) {
-        //std::cerr << "ERROR: JamLink only support ONE channel. Run JackTrip using only one channel"
+        // std::cerr << "ERROR: JamLink only support ONE channel. Run JackTrip using only
+        // one channel"
         //	      << endl;
-        //std::exit(1);
-        //std::cerr << "WARINING: JamLink only support ONE channel. Run JackTrip using only one channel" << endl;
-        //throw std::logic_error("JamLink only support ONE channel. Run JackTrip using only one channel");
+        // std::exit(1);
+        // std::cerr << "WARINING: JamLink only support ONE channel. Run JackTrip using
+        // only one channel" << endl; throw std::logic_error("JamLink only support ONE
+        // channel. Run JackTrip using only one channel");
         emit signalError(
             "JamLink only support ONE channel. Run JackTrip using only one channel");
     }
@@ -281,8 +285,9 @@ void JamLinkHeader::fillHeaderCommonFromAudio()
     // Sampling Rate
     int rate_type = mJackTrip->getSampleRateType();
     if (rate_type != AudioInterface::SR48) {
-        //std::cerr << "WARINING: JamLink only support 48kHz for communication with JackTrip at the moment." << endl;
-        //throw std::logic_error("ERROR: JamLink only support 48kHz for communication with JackTrip at the moment.");
+        // std::cerr << "WARINING: JamLink only support 48kHz for communication with
+        // JackTrip at the moment." << endl; throw std::logic_error("ERROR: JamLink only
+        // support 48kHz for communication with JackTrip at the moment.");
         emit signalError(
             "ERROR: JamLink only support 48kHz for communication with JackTrip at the "
             "moment.");
@@ -291,8 +296,9 @@ void JamLinkHeader::fillHeaderCommonFromAudio()
     // Check Buffer Size
     int buf_size = mJackTrip->getBufferSizeInSamples();
     if (buf_size != 64) {
-        //std::cerr << "WARINING: JamLink only support 64 buffer size for communication with JackTrip at the moment." << endl;
-        //throw std::logic_error("ERROR: JamLink only support 64 buffer size for communication with JackTrip at the moment.");
+        // std::cerr << "WARINING: JamLink only support 64 buffer size for communication
+        // with JackTrip at the moment." << endl; throw std::logic_error("ERROR: JamLink
+        // only support 64 buffer size for communication with JackTrip at the moment.");
         emit signalError(
             "ERROR: JamLink only support 64 buffer size for communication with JackTrip "
             "at the moment.");
@@ -313,9 +319,9 @@ void JamLinkHeader::fillHeaderCommonFromAudio()
         mHeader.Common = (mHeader.Common | ETX_22KHZ);
         break;
     default:
-        //std::cerr << "ERROR: Sample rate not supported by JamLink" << endl;
-        //std::exit(1);
-        //throw std::out_of_range("Sample rate not supported by JamLink");
+        // std::cerr << "ERROR: Sample rate not supported by JamLink" << endl;
+        // std::exit(1);
+        // throw std::out_of_range("Sample rate not supported by JamLink");
         emit signalError("Sample rate not supported by JamLink.");
         break;
     }

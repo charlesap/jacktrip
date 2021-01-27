@@ -77,8 +77,8 @@ JackTripWorker::JackTripWorker(UdpHubListener* udphublistener, int BufferQueueLe
 #endif  // endwhere
 {
     setAutoDelete(false);  // stick around after calling run()
-    //mNetks = new NetKS;
-    //mNetks->play();
+    // mNetks = new NetKS;
+    // mNetks->play();
     mBufferStrategy      = 1;
     mBroadcastQueue      = 0;
     mSimulatedLossRate   = 0.0;
@@ -93,13 +93,13 @@ void JackTripWorker::setJackTrip(int id, QString client_address, uint16_t server
                                  uint16_t client_port, int num_channels,
                                  bool connectDefaultAudioPorts)
 {
-    {  //Start Spawning, so lock mSpawning
+    {  // Start Spawning, so lock mSpawning
         QMutexLocker locker(&mMutex);
         mSpawning = true;
     }
     mID = id;
     // Set the jacktrip address and ports
-    //mClientAddress.setAddress(client_address);
+    // mClientAddress.setAddress(client_address);
     mClientAddress             = client_address;
     mServerPort                = server_port;
     mClientPort                = client_port;
@@ -120,15 +120,16 @@ void JackTripWorker::run()
         mSpawning = true;
     }
 
-    //QHostAddress ClientAddress;
+    // QHostAddress ClientAddress;
 
     // Try catching any exceptions that come from JackTrip
     try {
-        // Local event loop. this is necesary because QRunnables don't have their own as QThreads
+        // Local event loop. this is necesary because QRunnables don't have their own as
+        // QThreads
         QEventLoop event_loop;
 
         // Create and setup JackTrip Object
-        //JackTrip jacktrip(JackTrip::SERVER, JackTrip::UDP, mNumChans, 2);
+        // JackTrip jacktrip(JackTrip::SERVER, JackTrip::UDP, mNumChans, 2);
         if (gVerboseFlag) {
             cout << "---> JackTripWorker: Creating jacktrip objects..." << endl;
         }
@@ -169,7 +170,8 @@ void JackTripWorker::run()
                 mJackTrip->appendProcessPluginFromNetwork(
                     new dcblock2gain(mNumChans));  // plugin slot 0
                 ///////////////
-                //            mJackTrip->appendProcessPlugin(new comb16server(mNumNetChans));
+                //            mJackTrip->appendProcessPlugin(new
+                //            comb16server(mNumNetChans));
                 // -S LAIR no AP  mJackTrip->appendProcessPlugin(new AP8(mNumChans));
                 break;
             default:
@@ -184,7 +186,7 @@ void JackTripWorker::run()
 #ifdef __JAMTEST__
         JamTest jacktrip(
             JackTrip::SERVERPINGSERVER);  // ########### JamTest #################
-        //JackTrip jacktrip(JackTrip::SERVERPINGSERVER, JackTrip::UDP, mNumChans, 2);
+        // JackTrip jacktrip(JackTrip::SERVERPINGSERVER, JackTrip::UDP, mNumChans, 2);
 #endif
 
         jacktrip.setConnectDefaultAudioPorts(m_connectDefaultAudioPorts);
@@ -215,14 +217,14 @@ void JackTripWorker::run()
         QObject::connect(this, SIGNAL(signalRemoveThread()), &jacktrip,
                          SLOT(slotStopProcesses()), Qt::QueuedConnection);
 
-        //ClientAddress.setAddress(mClientAddress);
+        // ClientAddress.setAddress(mClientAddress);
         // If I don't type this line, I get a bus error in the next line.
         // I still haven't figure out why
-        //ClientAddress.toString().toLatin1().constData();
-        //jacktrip.setPeerAddress(ClientAddress.toString().toLatin1().constData());
+        // ClientAddress.toString().toLatin1().constData();
+        // jacktrip.setPeerAddress(ClientAddress.toString().toLatin1().constData());
         jacktrip.setPeerAddress(mClientAddress);
         jacktrip.setBindPorts(mServerPort);
-        //jacktrip.setPeerPorts(mClientPort);
+        // jacktrip.setPeerPorts(mClientPort);
         jacktrip.setBufferStrategy(mBufferStrategy);
         jacktrip.setNetIssuesSimulation(mSimulatedLossRate, mSimulatedJitterRate,
                                         mSimulatedDelayRel);
@@ -267,7 +269,7 @@ void JackTripWorker::run()
         }
 
         // wait for jacktrip to be done before exiting the Worker Thread
-        //jacktrip.wait();
+        // jacktrip.wait();
 
     } catch (const std::exception& e) {
         std::cerr << "Couldn't send thread to the Pool" << endl;
@@ -299,8 +301,8 @@ void JackTripWorker::run()
 // returns -1 on error
 int JackTripWorker::setJackTripFromClientHeader(JackTrip& jacktrip)
 {
-    //QHostAddress peerHostAddress;
-    //uint16_t peer_port;
+    // QHostAddress peerHostAddress;
+    // uint16_t peer_port;
     QUdpSocket UdpSockTemp;  // Create socket to wait for client
 
     // Bind the socket

@@ -46,9 +46,9 @@ QMutex JMess::sJMessMutex;
 //-------------------------------------------------------------------------------
 JMess::JMess()
 {
-    //Open a client connection to the JACK server.  Starting a
-    //new server only to list its ports seems pointless, so we
-    //specify JackNoStartServer.
+    // Open a client connection to the JACK server.  Starting a
+    // new server only to list its ports seems pointless, so we
+    // specify JackNoStartServer.
     mClient = jack_client_open("lsp", JackNoStartServer, &mStatus);
     if (mClient == nullptr) {
         if (mStatus & JackServerFailed) {
@@ -147,10 +147,10 @@ void JMess::setConnectedPorts()
     mConnectedPorts.clear();
 
     const char **ports       = nullptr,
-               **connections = nullptr;  //vector of ports and connections
-    QVector<QString> OutputInput(2);     //helper variable
+               **connections = nullptr;  // vector of ports and connections
+    QVector<QString> OutputInput(2);     // helper variable
 
-    //Get active output ports.
+    // Get active output ports.
     ports = jack_get_ports(mClient, nullptr, nullptr, JackPortIsOutput);
 
     for (unsigned int out_i = 0; ports[out_i]; ++out_i) {
@@ -179,9 +179,9 @@ void JMess::connectSpawnedPorts(int nChans, unsigned int hubPatch)
     int ctr = 0;
 
     const char** ports = nullptr;     //, **connections; //vector of ports and connections
-    QVector<QString> OutputInput(2);  //helper variable
+    QVector<QString> OutputInput(2);  // helper variable
 
-    //Get active output ports.
+    // Get active output ports.
     ports = jack_get_ports(mClient, nullptr, nullptr, JackPortIsOutput);
 
     for (unsigned int out_i = 0; ports[out_i]; ++out_i) {
@@ -204,7 +204,7 @@ void JMess::connectSpawnedPorts(int nChans, unsigned int hubPatch)
             //                        qDebug() << ports[out_i] << systemPort << s;
         }
     }
-    //for (int i = 0; i<ctr; i++) qDebug() << IPS[i];
+    // for (int i = 0; i<ctr; i++) qDebug() << IPS[i];
     disconnectAll();
 
     int k      = 0;
@@ -222,7 +222,7 @@ void JMess::connectSpawnedPorts(int nChans, unsigned int hubPatch)
                 k = (j + (i + 1)) % ctr;
             }
             for (int l = 1; l <= nChans; l++) {  // chans are 1-based
-                //qDebug() << "connect " << IPS[i]+":receive_"+QString::number(l)
+                // qDebug() << "connect " << IPS[i]+":receive_"+QString::number(l)
                 //<<"with " << IPS[k]+":send_"+QString::number(l);
 
                 QString left  = IPS[i] + ":receive_" + QString::number(l);
@@ -247,7 +247,7 @@ void JMess::connectSpawnedPorts(int nChans, unsigned int hubPatch)
             for (int j = 0; j < jLimit; j++) {
                 k = (j + (i + 1)) % ctr;
                 for (int l = 1; l <= nChans; l++) {  // chans are 1-based
-                    //qDebug() << "connect " << IPS[i]+":receive_"+QString::number(l)
+                    // qDebug() << "connect " << IPS[i]+":receive_"+QString::number(l)
                     //<<"with " << IPS[k]+":send_"+QString::number(l);
 
                     QString left  = IPS[i] + ":receive_" + QString::number(l);
@@ -310,8 +310,8 @@ void JMess::connectSpawnedPorts(int nChans, unsigned int hubPatch)
 // send_1
 // I think it should be extended to 4 in/out ports per client.
 
-// this is brute force, does not look at individual clients, just patches the whole ensemble
-// each time
+// this is brute force, does not look at individual clients, just patches the whole
+// ensemble each time
 void JMess::connectTUB(int /*nChans*/)
 // called from UdpHubListener::connectPatch
 {
@@ -459,11 +459,13 @@ void JMess::connectPorts(__attribute__((unused)) QString xmlInFile)
     //	 it != mPortsToConnect.end(); ++it) {
     //      OutputInput = *it;
 
-    //      if (jack_connect(mClient, OutputInput[0].toLatin1(), OutputInput[1].toLatin1())) {
+    //      if (jack_connect(mClient, OutputInput[0].toLatin1(),
+    //      OutputInput[1].toLatin1())) {
     //	//Display a warining only if the error is not because the ports are already
     //	//connected, in case the program doesn't display anyting.
     //	if (EEXIST !=
-    //        jack_connect(mClient, OutputInput[0].toLatin1(), OutputInput[1].toLatin1())) {
+    //        jack_connect(mClient, OutputInput[0].toLatin1(), OutputInput[1].toLatin1()))
+    //        {
     //	  cerr << "WARNING: port: " << qPrintable(OutputInput[0])
     //	       << "and port: " << qPrintable(OutputInput[1])
     //	       << " could not be connected.\n";

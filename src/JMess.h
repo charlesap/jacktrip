@@ -76,14 +76,14 @@ class JMess
    private:
     int parseXML(QString xmlInFile);
 
-    jack_client_t* mClient;  //Class client
-    jack_status_t mStatus;   //Class client status
+    jack_client_t* mClient;  // Class client
+    jack_status_t mStatus;   // Class client status
 
-    //Vectors of Connected Ports and Ports to connects
-    //This are a matrix (Nx2) of string like this:
-    //OuputPort1 InputPort1
+    // Vectors of Connected Ports and Ports to connects
+    // This are a matrix (Nx2) of string like this:
+    // OuputPort1 InputPort1
     // ...
-    //OuputPortN InputPortN
+    // OuputPortN InputPortN
     QVector<QVector<QString> > mConnectedPorts;
     QVector<QVector<QString> > mPortsToConnect;
     static QMutex sJMessMutex;  ///< Mutex to make thread safe jack functions that are not

@@ -55,12 +55,10 @@ AudioInterface::AudioInterface(JackTrip* jacktrip, int NumInChans, int NumOutCha
     : mJackTrip(jacktrip)
     , mNumInChans(NumInChans)
     , mNumOutChans(NumOutChans)
-    ,
 #ifdef WAIR  // WAIR
-    mNumNetRevChans(NumNetRevChans)
-    ,
+    , mNumNetRevChans(NumNetRevChans)
 #endif  // endwhere
-    mAudioBitResolution(AudioBitResolution * 8)
+    , mAudioBitResolution(AudioBitResolution * 8)
     , mBitResolutionMode(AudioBitResolution)
     , mSampleRate(gDefaultSampleRate)
     , mBufferSizeInSamples(gDefaultBufferSizeInSamples)
@@ -70,7 +68,7 @@ AudioInterface::AudioInterface(JackTrip* jacktrip, int NumInChans, int NumOutCha
     , mProcessingAudio(false)
 {
 #ifndef WAIR
-    //cc
+    // cc
     // Initialize and assign memory for ProcessPlugins Buffers
     mInProcessBuffer.resize(mNumInChans);
     mOutProcessBuffer.resize(mNumOutChans);
@@ -231,8 +229,8 @@ void AudioInterface::callback(QVarLengthArray<sample_t*>& in_buffer,
     // 2) Dynamically allocate ProcessPlugin processes
     // -----------------------------------------------
     // The processing will be done in order of allocation
-    /// \todo Implement for more than one process plugin, now it just works propertely with one.
-    /// do it chaining outputs to inputs in the buffers. May need a tempo buffer
+    /// \todo Implement for more than one process plugin, now it just works propertely
+    /// with one. do it chaining outputs to inputs in the buffers. May need a tempo buffer
 
 #ifndef WAIR  // NOT WAIR:
     for (auto p : mProcessPluginsFromNetwork) {
@@ -317,7 +315,7 @@ void AudioInterface::callback(QVarLengthArray<sample_t*>& in_buffer,
         }
         for (int i = 0; i < mNumNetRevChans; i++) {
             sample_t* mix_sample = out_buffer[i % mNumOutChans];
-            sample_t* tmp_sample = mNetInBuffer[i];  //mNetInBuffer
+            sample_t* tmp_sample = mNetInBuffer[i];  // mNetInBuffer
             for (int j = 0; j < (int)n_frames; j++) { mix_sample[j] += tmp_sample[j]; }
         }  // nib6 to aob2
 #else  // AP
@@ -360,10 +358,10 @@ void AudioInterface::callback(QVarLengthArray<sample_t*>& in_buffer,
   int* error;
   mode = celt_mode_create(48000, 2, 64, error);
   */
-    //celt_mode_create(48000, 2, 64, NULL);
-    //unsigned char* compressed;
-    //CELTEncoder* celtEncoder;
-    //celt_encode_float(celtEncoder, mInBuffer, NULL, compressed, );
+    // celt_mode_create(48000, 2, 64, NULL);
+    // unsigned char* compressed;
+    // CELTEncoder* celtEncoder;
+    // celt_encode_float(celtEncoder, mInBuffer, NULL, compressed, );
 
     ///********************************************************
     ///********************************************************
@@ -380,7 +378,7 @@ void AudioInterface::broadcastCallback(QVarLengthArray<sample_t*>& mon_buffer,
     mJackTrip->receiveBroadcastPacket(mOutputPacket);
     // Extract separate channels to send to Jack
     for (int i = 0; i < mNumOutChans; i++) {
-        sample_t* tmp_sample = mon_buffer[i];  //sample buffer for channel i
+        sample_t* tmp_sample = mon_buffer[i];  // sample buffer for channel i
         for (unsigned int j = 0; j < n_frames; j++) {
             // Change the bit resolution on each sample
             fromBitToSampleConversion(
@@ -410,7 +408,7 @@ void AudioInterface::computeProcessFromNetwork(QVarLengthArray<sample_t*>& out_b
     if (mNumNetRevChans)
         // Extract separate channels
         for (int i = 0; i < mNumNetRevChans; i++) {
-            sample_t* tmp_sample = mNetInBuffer[i];  //sample buffer for channel i
+            sample_t* tmp_sample = mNetInBuffer[i];  // sample buffer for channel i
             for (unsigned int j = 0; j < n_frames; j++) {
                 // Change the bit resolution on each sample
                 fromBitToSampleConversion(
@@ -428,10 +426,10 @@ void AudioInterface::computeProcessFromNetwork(QVarLengthArray<sample_t*>& out_b
         for (int i = 0; i < mNumOutChans; i++) {
             //--------
             // This should be faster for 32 bits
-            //std::memcpy(mOutBuffer[i], &mOutputPacket[i*mSizeInBytesPerChannel],
+            // std::memcpy(mOutBuffer[i], &mOutputPacket[i*mSizeInBytesPerChannel],
             //         mSizeInBytesPerChannel);
             //--------
-            sample_t* tmp_sample = out_buffer[i];  //sample buffer for channel i
+            sample_t* tmp_sample = out_buffer[i];  // sample buffer for channel i
             for (unsigned int j = 0; j < n_frames; j++) {
                 // Change the bit resolution on each sample
                 fromBitToSampleConversion(
@@ -456,13 +454,14 @@ void AudioInterface::computeProcessToNetwork(QVarLengthArray<sample_t*>& in_buff
     if (mNumNetRevChans)
         for (int i = 0; i < mNumNetRevChans; i++) {
             sample_t* tmp_sample =
-                in_buffer[i % mNumInChans];  //sample buffer for channel i
+                in_buffer[i % mNumInChans];  // sample buffer for channel i
             sample_t* tmp_process_sample =
-                mOutProcessBuffer[i];  //sample buffer from the output process
+                mOutProcessBuffer[i];  // sample buffer from the output process
             sample_t tmp_result;
             for (unsigned int j = 0; j < n_frames; j++) {
                 // Change the bit resolution on each sample
-                // Add the input jack buffer to the buffer resulting from the output process
+                // Add the input jack buffer to the buffer resulting from the output
+                // process
 #define INGAIN \
     (0.9999)  // 0.9999 because 1.0 can saturate the fixed pt rounding on output
 #define COMBGAIN (1.0)
@@ -482,16 +481,17 @@ void AudioInterface::computeProcessToNetwork(QVarLengthArray<sample_t*>& in_buff
         for (int i = 0; i < mNumInChans; i++) {
             //--------
             // This should be faster for 32 bits
-            //std::memcpy(&mInputPacket[i*mSizeInBytesPerChannel], mInBuffer[i],
+            // std::memcpy(&mInputPacket[i*mSizeInBytesPerChannel], mInBuffer[i],
             //         mSizeInBytesPerChannel);
             //--------
-            sample_t* tmp_sample = in_buffer[i];  //sample buffer for channel i
+            sample_t* tmp_sample = in_buffer[i];  // sample buffer for channel i
             sample_t* tmp_process_sample =
-                mOutProcessBuffer[i];  //sample buffer from the output process
+                mOutProcessBuffer[i];  // sample buffer from the output process
             sample_t tmp_result = NAN;
             for (unsigned int j = 0; j < n_frames; j++) {
                 // Change the bit resolution on each sample
-                // Add the input jack buffer to the buffer resulting from the output process
+                // Add the input jack buffer to the buffer resulting from the output
+                // process
                 tmp_result = tmp_sample[j] + tmp_process_sample[j];
                 fromSampleToBitConversion(
                     &tmp_result,
@@ -546,7 +546,7 @@ void AudioInterface::fromSampleToBitConversion(
         // Then we compute the remainder error, and quantize that part into an 8bit number
         // Note that this remainder is always positive, so we use an unsigned integer
         tmp_sample8 = floor(
-            (tmp_sample - tmp_sample16)  //this is a positive number, between 0.0-1.0
+            (tmp_sample - tmp_sample16)  // this is a positive number, between 0.0-1.0
             * 256.0);
         tmp_u8 = static_cast<uint8_t>(tmp_sample8);
 

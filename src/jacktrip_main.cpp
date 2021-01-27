@@ -55,7 +55,7 @@ void qtMessageHandler(__attribute__((unused)) QtMsgType type,
 #if defined(__LINUX__) || (__MAC_OSX__)
 static int setupUnixSignalHandler(void (*handler)(int))
 {
-    //Setup our SIGINT handler.
+    // Setup our SIGINT handler.
     struct sigaction sigInt;
     sigInt.sa_handler = handler;
     sigemptyset(&sigInt.sa_mask);
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
         Settings settings;
         settings.parseInput(argc, argv);
 
-        //Either start our hub server or our jacktrip process as appropriate.
+        // Either start our hub server or our jacktrip process as appropriate.
         if (settings.isHubServer()) {
             udpHub.reset(settings.getConfiguredHubServer());
             if (gVerboseFlag) {

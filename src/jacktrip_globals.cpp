@@ -55,7 +55,8 @@
 
 // The following function is taken from the chromium source code
 // https://github.com/chromium/chromium/blob/master/base/threading/platform_thread_mac.mm
-// For the following macOS implementation of the function setRealtimeProcessPriority() only: Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// For the following macOS implementation of the function setRealtimeProcessPriority()
+// only: Copyright (c) 2012 The Chromium Authors. All rights reserved.
 
 // Enables time-contraint policy and priority suitable for low-latency,
 // glitch-resistant audio.

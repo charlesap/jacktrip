@@ -79,7 +79,7 @@ JackAudioInterface::JackAudioInterface(
     mNumNetRevChans(NumNetRevChans)
     ,
 #endif  // endwhere
-    //mAudioBitResolution(AudioBitResolution*8),
+    // mAudioBitResolution(AudioBitResolution*8),
     mBitResolutionMode(AudioBitResolution)
     , mClient(nullptr)
     , mClientName(ClientName)
@@ -103,14 +103,14 @@ void JackAudioInterface::setupClient()
     QByteArray clientName = mClientName.toUtf8();
 //    const char* server_name = NULL;
 #ifdef __MAC_OSX__
-    //Jack seems to have an issue with client names over 27 bytes in OS X
+    // Jack seems to have an issue with client names over 27 bytes in OS X
     int maxSize = 27;
 #else
     int maxSize = jack_client_name_size();
 #endif
     if (clientName.length() > maxSize) {
         int length = maxSize;
-        //Make sure we don't cut mid multi-byte character.
+        // Make sure we don't cut mid multi-byte character.
         while ((length > 0) && ((clientName.at(length) & 0xc0) == 0x80)) { length--; }
         clientName.truncate(length);
     }
@@ -128,7 +128,8 @@ void JackAudioInterface::setupClient()
 //#ifndef WAIR // WAIR
 //        mClient = jack_client_open (client_name, options, &status, server_name);
 //#else
-//        mClient = jack_client_open (client_name, JackUseExactName, &status, server_name);
+//        mClient = jack_client_open (client_name, JackUseExactName, &status,
+//        server_name);
 //#endif // endwhere
 #ifndef WAIR  // WAIR
         mClient = jack_client_open(clientName.constData(), options, &status);
@@ -138,14 +139,14 @@ void JackAudioInterface::setupClient()
     }
 
     if (mClient == nullptr) {
-        //fprintf (stderr, "jack_client_open() failed, "
+        // fprintf (stderr, "jack_client_open() failed, "
         //	     "status = 0x%2.0x\n", status);
         if (status & JackServerFailed) {
             fprintf(stderr, "Unable to connect to JACK server\n");
-            //std::cerr << "ERROR: Maybe the JACK server is not running?" << std::endl;
-            //std::cerr << gPrintSeparator << std::endl;
+            // std::cerr << "ERROR: Maybe the JACK server is not running?" << std::endl;
+            // std::cerr << gPrintSeparator << std::endl;
         }
-        //std::exit(1);
+        // std::exit(1);
         throw std::runtime_error("Maybe the JACK server is not running?");
     }
     if (status & JackServerStarted) { fprintf(stderr, "JACK server started\n"); }
@@ -171,7 +172,7 @@ void JackAudioInterface::setupClient()
 //*******************************************************************************
 void JackAudioInterface::createChannels()
 {
-    //Create Input Ports
+    // Create Input Ports
     mInPorts.resize(mNumInChans);
     for (int i = 0; i < mNumInChans; i++) {
         QString inName;
@@ -180,7 +181,7 @@ void JackAudioInterface::createChannels()
                                          JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
     }
 
-    //Create Output Ports
+    // Create Output Ports
     mOutPorts.resize(mNumOutChans);
     for (int i = 0; i < mNumInChans; i++) {
         QString outName;
@@ -188,7 +189,7 @@ void JackAudioInterface::createChannels()
         mOutPorts[i] = jack_port_register(mClient, outName.toLatin1(),
                                           JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
     }
-    //Create Broadcast Ports
+    // Create Broadcast Ports
     if (mBroadcast) {
         mBroadcastPorts.resize(mNumOutChans);
         for (int i = 0; i < mNumInChans; i++) {
@@ -225,22 +226,22 @@ void JackAudioInterface::setProcessCallback()
     std::cout << "Setting JACK Process Callback..." << std::endl;
     if (int code = jack_set_process_callback(
             mClient, JackAudioInterface::wrapperProcessCallback, this)) {
-        //std::cerr << "Could not set the process callback" << std::endl;
-        //return(code);
+        // std::cerr << "Could not set the process callback" << std::endl;
+        // return(code);
         (void)code;  // to avoid compiler warnings
         throw std::runtime_error("Could not set the Jack process callback");
-        //std::exit(1);
+        // std::exit(1);
     }
     std::cout << "SUCCESS" << std::endl;
     std::cout << gPrintSeparator << std::endl;
-    //return(0);
+    // return(0);
 }
 
 //*******************************************************************************
 int JackAudioInterface::startProcess() const
 {
-    //Tell the JACK server that we are ready to roll.  Our
-    //process() callback will start running now.
+    // Tell the JACK server that we are ready to roll.  Our
+    // process() callback will start running now.
     if (int code = (jack_activate(mClient))) {
         std::cerr << "Cannot activate client" << std::endl;
         return (code);
@@ -263,12 +264,12 @@ int JackAudioInterface::stopProcess() const
 //*******************************************************************************
 void JackAudioInterface::jackShutdown(void*)
 {
-    //std::cout << "The Jack Server was shut down!" << std::endl;
+    // std::cout << "The Jack Server was shut down!" << std::endl;
     JackTrip::sJackStopped = true;
     std::cout << "The Jack Server was shut down!" << std::endl;
-    //throw std::runtime_error("The Jack Server was shut down!");
-    //std::cout << "Exiting program..." << std::endl;
-    //std::exit(1);
+    // throw std::runtime_error("The Jack Server was shut down!");
+    // std::cout << "Exiting program..." << std::endl;
+    // std::exit(1);
 }
 
 //*******************************************************************************
@@ -283,7 +284,8 @@ int JackAudioInterface::processCallback(jack_nframes_t nframes)
     // Get input and output buffers from JACK
     //-------------------------------------------------------------------
     for (int i = 0; i < mNumInChans; i++) {
-        // Input Ports are READ ONLY and change as needed (no locks) - make a copy for debugging
+        // Input Ports are READ ONLY and change as needed (no locks) - make a copy for
+        // debugging
         mInBuffer[i] =
             reinterpret_cast<sample_t*>(jack_port_get_buffer(mInPorts[i], nframes));
     }
@@ -296,8 +298,8 @@ int JackAudioInterface::processCallback(jack_nframes_t nframes)
     // TEST: Loopback
     // To test, uncomment and send audio to client input. The same audio
     // should come out as output in the first channel
-    //memcpy (mOutBuffer[0], mInBuffer[0], sizeof(sample_t) * nframes);
-    //memcpy (mOutBuffer[1], mInBuffer[1], sizeof(sample_t) * nframes);
+    // memcpy (mOutBuffer[0], mInBuffer[0], sizeof(sample_t) * nframes);
+    // memcpy (mOutBuffer[1], mInBuffer[1], sizeof(sample_t) * nframes);
     //-------------------------------------------------------------------
 
     AudioInterface::callback(mInBuffer, mOutBuffer, nframes);
@@ -393,7 +395,8 @@ int JackAudioInterface::processCallback(jack_nframes_t nframes)
   // -----------------------------------------------
   // The processing will be done in order of allocation
 
-  ///\todo Implement for more than one process plugin, now it just works propertely with one.
+  /// \todo Implement for more than one process plugin, now it just works propertely with
+  /// one.
   /// do it chaining outputs to inputs in the buffers. May need a tempo buffer
   for (int i = 0; i < mNumInChans; i++) {
     std::memset(mInProcessBuffer[i], 0, sizeof(sample_t) * nframes);
@@ -405,7 +408,8 @@ int JackAudioInterface::processCallback(jack_nframes_t nframes)
 
   for (int i = 0; i < mProcessPlugins.size(); i++) {
     //mProcessPlugins[i]->compute(nframes, mOutBuffer.data(), mInBuffer.data());
-    mProcessPlugins[i]->compute(nframes, mInProcessBuffer.data(), mOutProcessBuffer.data());
+    mProcessPlugins[i]->compute(nframes, mInProcessBuffer.data(),
+mOutProcessBuffer.data());
   }
 
 
@@ -420,10 +424,10 @@ int JackAudioInterface::processCallback(jack_nframes_t nframes)
   int* error;
   mode = celt_mode_create(48000, 2, 64, error);
   */
-//celt_mode_create(48000, 2, 64, NULL);
-//unsigned char* compressed;
-//CELTEncoder* celtEncoder;
-//celt_encode_float(celtEncoder, mInBuffer, NULL, compressed, );
+// celt_mode_create(48000, 2, 64, NULL);
+// unsigned char* compressed;
+// CELTEncoder* celtEncoder;
+// celt_encode_float(celtEncoder, mInBuffer, NULL, compressed, );
 
 ///********************************************************
 ///********************************************************
@@ -465,7 +469,8 @@ void JackAudioInterface::computeNetworkProcessFromNetwork()
     //--------
     sample_t* tmp_sample = mOutBuffer[i]; //sample buffer for channel i
     for (int j = 0; j < mNumFrames; j++) {
-      //std::memcpy(&tmp_sample[j], &mOutputPacket[(i*mSizeInBytesPerChannel) + (j*4)], 4);
+      //std::memcpy(&tmp_sample[j], &mOutputPacket[(i*mSizeInBytesPerChannel) + (j*4)],
+4);
       // Change the bit resolution on each sample
       //cout << tmp_sample[j] << endl;
       fromBitToSampleConversion(&mOutputPacket[(i*mSizeInBytesPerChannel)
@@ -491,10 +496,10 @@ void JackAudioInterface::computeNetworkProcessToNetwork()
     //		mSizeInBytesPerChannel);
     //--------
     sample_t* tmp_sample = mInBuffer[i]; //sample buffer for channel i
-    sample_t* tmp_process_sample = mOutProcessBuffer[i]; //sample buffer from the output process
-    sample_t tmp_result;
-    for (int j = 0; j < mNumFrames; j++) {
-      //std::memcpy(&tmp_sample[j], &mOutputPacket[(i*mSizeInBytesPerChannel) + (j*4)], 4);
+    sample_t* tmp_process_sample = mOutProcessBuffer[i]; //sample buffer from the output
+process sample_t tmp_result; for (int j = 0; j < mNumFrames; j++) {
+      //std::memcpy(&tmp_sample[j], &mOutputPacket[(i*mSizeInBytesPerChannel) + (j*4)],
+4);
       // Change the bit resolution on each sample
 
       // Add the input jack buffer to the buffer resulting from the output process
@@ -513,8 +518,8 @@ void JackAudioInterface::computeNetworkProcessToNetwork()
 
 //*******************************************************************************
 /*
-//void JackAudioInterface::appendProcessPlugin(const std::tr1::shared_ptr<ProcessPlugin> plugin)
-void JackAudioInterface::appendProcessPlugin(ProcessPlugin* plugin)
+//void JackAudioInterface::appendProcessPlugin(const std::tr1::shared_ptr<ProcessPlugin>
+plugin) void JackAudioInterface::appendProcessPlugin(ProcessPlugin* plugin)
 {
   /// \todo check that channels in ProcessPlugins are less or same that jack channels
   if ( plugin->getNumInputs() ) {}
